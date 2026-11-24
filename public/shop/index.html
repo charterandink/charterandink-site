@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shop | Charter &amp; Ink</title>
+<meta name="description" content="Handmade resin dice, chonk D20s and gallery canvas prints from Charter & Ink in Jefferson City, Missouri. Free shipping over $75.">
+<link rel="icon" href="/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="top">
+  <a class="mark" href="/"><img src="/img/logo.png" alt="" class="mark-img" onerror="this.remove()"><span>Charter <em>&amp;</em> Ink</span></a>
+  <nav>
+    <a href="/shop/">Shop</a>
+    <a href="/#workshop">Workshop</a>
+    <a class="nav-cta" href="#" data-open-cart>Cart</a>
+  </nav>
+</header>
+
+<main class="shop">
+  <div class="shop-head">
+    <p class="kicker">The shop</p>
+    <h1>Fresh from the pour.</h1>
+    <p class="lede">Most of these are one of a kind. When it's gone, it's gone. Free shipping on orders over $75.</p>
+  </div>
+
+  <div class="shop-bar">
+    <div class="tabs" id="tabs" role="tablist"></div>
+    <label class="sort">Sort
+      <select id="sort">
+        <option value="new">Newest</option>
+        <option value="low">Price: low to high</option>
+        <option value="high">Price: high to low</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="pgrid" id="pgrid"><p class="loading">Loading the shelves...</p></div>
+</main>
+
+<footer>
+  <div class="foot-mark">Charter <em>&amp;</em> Ink</div>
+  <p>Handmade in Jefferson City, Missouri</p>
+  <p class="foot-links"><a href="mailto:mike@charterandink.com">mike@charterandink.com</a><a href="/policies.html">Shipping &amp; returns</a></p>
+</footer>
+
+<script src="/shop.js"></script>
+<script>
+(async () => {
+  const grid = document.getElementById('pgrid'), tabs = document.getElementById('tabs'), sortSel = document.getElementById('sort');
+  const { esc, money } = CI;
+  let products, cat = new URLSearchParams(location.search).get('c') || 'All';
+  try { products = await CI.loadCatalog(); }
+  catch (e) { grid.innerHTML = `<p class="loading">${esc(e.message)}</p>`; return; }
+
+  const cats = ['All', ...new Set(products.flatMap(p => p.categories))];
+  if (!cats.includes(cat)) cat = 'All';
+  const avail = p => p.variations.some(v => v.stock === null || v.stock > 0);
+  const low = p => Math.min(...p.variations.map(v => v.price));
+
+  function draw() {
+    tabs.innerHTML = cats.map(c => `<button role="tab" aria-selected="${c === cat}" data-c="${esc(c)}">${esc(c)}</button>`).join('');
+    let list = products.filter(p => cat === 'All' || p.categories.includes(cat));
+    const s = sortSel.value;
+    list.sort((a, b) =>
+      (avail(b) - avail(a)) ||
+      (s === 'low' ? low(a) - low(b) : s === 'high' ? low(b) - low(a) : String(b.updated).localeCompare(String(a.updated))));
+    if (!list.length) { grid.innerHTML = `<p class="loading">Nothing here right now. New pours are on the way.</p>`; return; }
+    grid.innerHTML = list.map(p => {
+      const out = !avail(p), multi = new Set(p.variations.map(v => v.price)).size > 1;
+      return `<a class="pcard${out ? ' out' : ''}" href="/product.html?p=${esc(p.slug)}">
+        <div class="pimg">${p.images[0] ? `<img src="${esc(p.images[0])}" alt="${esc(p.name)}" loading="lazy">` : ''}${out ? '<span class="tag">Sold out</span>' : ''}</div>
+        <h3>${esc(p.name)}</h3>
+        <span class="price">${multi ? 'From ' : ''}${money(low(p))}</span>
+      </a>`;
+    }).join('');
+  }
+  tabs.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    cat = b.dataset.c;
+    history.replaceState(null, '', cat === 'All' ? '/shop/' : `/shop/?c=${encodeURIComponent(cat)}`);
+    draw();
+  });
+  sortSel.onchange = draw;
+  draw();
+})();
+</script>
+</body>
+</html>

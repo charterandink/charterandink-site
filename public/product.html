@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Charter &amp; Ink</title>
+<link rel="icon" href="/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="top">
+  <a class="mark" href="/"><img src="/img/logo.png" alt="" class="mark-img" onerror="this.remove()"><span>Charter <em>&amp;</em> Ink</span></a>
+  <nav>
+    <a href="/shop/">Shop</a>
+    <a href="/#workshop">Workshop</a>
+    <a class="nav-cta" href="#" data-open-cart>Cart</a>
+  </nav>
+</header>
+
+<main class="pdp" id="pdp"><p class="loading">Loading...</p></main>
+
+<footer>
+  <div class="foot-mark">Charter <em>&amp;</em> Ink</div>
+  <p>Handmade in Jefferson City, Missouri</p>
+  <p class="foot-links"><a href="mailto:mike@charterandink.com">mike@charterandink.com</a><a href="/policies.html">Shipping &amp; returns</a></p>
+</footer>
+
+<script src="/shop.js"></script>
+<script>
+(async () => {
+  const el = document.getElementById('pdp'), { esc, money } = CI;
+  const slug = new URLSearchParams(location.search).get('p');
+  let products;
+  try { products = await CI.loadCatalog(); } catch (e) { el.innerHTML = `<p class="loading">${esc(e.message)}</p>`; return; }
+  const p = products.find(x => x.slug === slug);
+  if (!p) { el.innerHTML = `<p class="loading">That one's gone. <a href="/shop/">See what's in the shop</a>.</p>`; return; }
+
+  document.title = `${p.name} | Charter & Ink`;
+  let v = p.variations.find(x => x.stock === null || x.stock > 0) || p.variations[0];
+  const paras = esc(p.description).split(/\n\s*\n|\n/).filter(Boolean).map(t => `<p>${t}</p>`).join('');
+
+  el.innerHTML = `
+    <a class="back" href="/shop/">← Back to the shop</a>
+    <div class="pdp-grid">
+      <div class="gallery">
+        <div class="main-img" id="main-img">${p.images[0] ? `<img src="${esc(p.images[0])}" alt="${esc(p.name)}">` : ''}</div>
+        ${p.images.length > 1 ? `<div class="thumbs">${p.images.map((u, i) => `<button data-i="${i}" aria-label="Photo ${i + 1}"${i === 0 ? ' class="on"' : ''}><img src="${esc(u)}" alt=""></button>`).join('')}</div>` : ''}
+      </div>
+      <div class="pdp-info">
+        ${p.categories[0] ? `<p class="kicker">${esc(p.categories[0])}</p>` : ''}
+        <h1>${esc(p.name)}</h1>
+        <p class="pdp-price" id="pdp-price"></p>
+        ${p.variations.length > 1 ? `<label class="opt">Option
+          <select id="opt">${p.variations.map(x => `<option value="${esc(x.id)}"${x.id === v.id ? ' selected' : ''}${x.stock === 0 ? ' disabled' : ''}>${esc(x.name)}${x.stock === 0 ? ' (sold out)' : ''}</option>`).join('')}</select>
+        </label>` : ''}
+        <p class="stock" id="stock"></p>
+        <button class="btn full" id="add">Add to cart</button>
+        <div class="desc">${paras}</div>
+        <ul class="perks">
+          <li>Poured, hand-inked and balance-checked in Missouri</li>
+          <li>Free shipping on orders over $75</li>
+        </ul>
+      </div>
+    </div>`;
+
+  const price = document.getElementById('pdp-price'), stock = document.getElementById('stock'), addBtn = document.getElementById('add');
+  function sync() {
+    price.textContent = money(v.price);
+    const out = v.stock === 0;
+    stock.textContent = out ? 'Sold out' : v.stock === 1 ? 'One of a kind. Only 1 available.' : v.stock !== null && v.stock <= 3 ? `Only ${v.stock} left` : '';
+    addBtn.disabled = out; addBtn.textContent = out ? 'Sold out' : 'Add to cart';
+  }
+  document.getElementById('opt')?.addEventListener('change', e => { v = p.variations.find(x => x.id === e.target.value); sync(); });
+  addBtn.onclick = () => CI.add(p, v, 1);
+  el.querySelector('.thumbs')?.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    el.querySelectorAll('.thumbs button').forEach(x => x.classList.toggle('on', x === b));
+    document.getElementById('main-img').innerHTML = `<img src="${esc(p.images[+b.dataset.i])}" alt="${esc(p.name)}">`;
+  });
+  sync();
+})();
+</script>
+</body>
+</html>
