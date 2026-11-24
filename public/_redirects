@@ -1,0 +1,5 @@
+# Short links for print. Change the destination anytime; the printed QR code stays the same.
+# 302 = temporary, so browsers don't cache it forever.
+/hello   https://charterandink.etsy.com   302
+/shop    https://charterandink.etsy.com   302
+/con     /?src=con#list                   302
