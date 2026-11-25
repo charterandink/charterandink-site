@@ -81,7 +81,14 @@ Products only show on the site if they have a fixed price and aren't hidden from
 
 The form on /commissions/ saves each request. Download them all as a spreadsheet at
 `https://charterandink.com/api/commissions?key=YOUR_ADMIN_KEY` (same ADMIN_KEY as the email list).
-Requests don't email you yet; check that link, or ask Claude to add email alerts.
+Each new request also emails mike@charterandink.com, with Reply set to the customer.
+
+## Email alerts (Resend)
+
+New signups and commission requests send an alert through Resend. Cloudflare Pages settings needed:
+`RESEND_API_KEY` (Secret). Optional: `NOTIFY_TO` (defaults to mike@charterandink.com) and
+`NOTIFY_FROM` (defaults to "Charter & Ink Website <alerts@charterandink.com>").
+Without the key, the site works normally and just doesn't send alerts.
 
 ## Gallery (Workshop page)
 

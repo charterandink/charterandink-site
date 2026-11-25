@@ -1,12 +1,14 @@
 // POST /api/commission  -> saves a commission request in the SUBSCRIBERS KV namespace
 // under the key "commission:<timestamp>:<random>". Download them at /api/commissions?key=ADMIN_KEY.
 
+import { notify } from "../_lib/notify.js";
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const TYPES = ["Custom chonk", "Custom set", "Gift", "Not sure yet"];
 const BUDGETS = ["$100 to $150", "$150 to $300", "$300+", "Not sure"];
 const clip = (v, n) => String(v || "").trim().slice(0, n);
 
-export async function onRequestPost({ request, env }) {
+export async function onRequestPost({ request, env, waitUntil }) {
   let form;
   try { form = await request.formData(); } catch { return fail("Bad request.", 400); }
   if (clip(form.get("company"), 200)) return Response.json({ ok: true }); // bot trap
@@ -29,6 +31,22 @@ export async function onRequestPost({ request, env }) {
 
   const key = `commission:${r.received}:${crypto.randomUUID().slice(0, 8)}`;
   await env.SUBSCRIBERS.put(key, JSON.stringify(r));
+  waitUntil(notify(env, {
+    subject: `Commission request: ${r.type || "Not sure yet"} from ${r.name}`,
+    replyTo: r.email,
+    text: [
+      `${r.name} <${r.email}>`,
+      `Type: ${r.type || "Not sure yet"}`,
+      `Budget: ${r.budget || "Not sure"}`,
+      `Need by: ${r.needBy || "No date given"}`,
+      `References: ${r.refs || "None"}`,
+      "",
+      "Their idea:",
+      r.idea,
+      "",
+      "Hit reply to answer them directly.",
+    ].join("\n"),
+  }));
   return Response.json({ ok: true });
 }
 
