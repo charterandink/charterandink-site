@@ -87,7 +87,9 @@ Each request is also copied to the Google Sheet (see below).
 
 Every signup and commission request is copied to a Google Sheet (tabs: Subscribers, Commissions) by the
 Apps Script in `apps-script/Code.gs`. Once a day it emails mike@charterandink.com a digest of anything new.
-No new activity means no email. Setup steps are at the top of that file.
+No new activity means no email. Every Monday it also emails a visitor report pulled from Cloudflare Web
+Analytics (needs CF_API_TOKEN, CF_ACCOUNT_ID, CF_SITE_TAG in the script's Script Properties).
+Setup steps are at the top of that file.
 Cloudflare Pages settings: `SHEETS_WEBHOOK_URL` (Text, the script's /exec URL) and `SHEETS_SECRET` (Secret,
 same as SECRET in the script). Cloudflare also keeps its own copy, so the CSV links above still work.
 

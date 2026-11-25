@@ -1,6 +1,7 @@
 /**
  * Charter & Ink: website signups and commission requests -> this Google Sheet.
  * Sends one digest email a day when something new came in. Nothing new, no email.
+ * Every Monday it also emails a visitor report from Cloudflare Web Analytics (see weeklyReport).
  *
  * Setup (once):
  *  1. Paste this into Extensions > Apps Script of the sheet. Change SECRET below.
@@ -96,14 +97,100 @@ function sendDigest() {
   coms.mark(stamp);
 }
 
+// ---------- weekly visitor report (Cloudflare Web Analytics) ----------
+// Needs three Script Properties (Project Settings > Script Properties):
+//   CF_API_TOKEN  a Cloudflare API token with "Account Analytics: Read"
+//   CF_ACCOUNT_ID your Cloudflare account ID
+//   CF_SITE_TAG   the Web Analytics site tag for charterandink.com
+function weeklyReport() {
+  const p = PropertiesService.getScriptProperties();
+  const token = p.getProperty('CF_API_TOKEN'), account = p.getProperty('CF_ACCOUNT_ID'), site = p.getProperty('CF_SITE_TAG');
+  if (!token || !account || !site) throw new Error('Add CF_API_TOKEN, CF_ACCOUNT_ID and CF_SITE_TAG in Script Properties.');
+
+  const day = 864e5, now = new Date();
+  const end = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // midnight today
+  const start = new Date(end - 7 * day), prevStart = new Date(end - 14 * day);
+  const tz = SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone();
+  const fmt = d => Utilities.formatDate(d, tz, 'MMM d');
+
+  const thisWeek = cfTotals(token, account, site, start, end);
+  const lastWeek = cfTotals(token, account, site, prevStart, start);
+  const top = dim => cfTop(token, account, site, start, end, dim);
+
+  const change = (a, b) => (b ? `${a >= b ? '+' : ''}${Math.round((a - b) / b * 100)}% vs. week before` : 'first week of data');
+  const list = (rows, blank) => rows.length
+    ? rows.map(r => `  ${String(r.count).padStart(5)}  ${r.name || blank}`).join('\n')
+    : '  (none yet)';
+
+  const newSubs = countSince(TABS.signup, start, end), newComs = countSince(TABS.commission, start, end);
+
+  const body = [
+    `charterandink.com, ${fmt(start)} to ${fmt(new Date(end - day))}`,
+    '',
+    `Visits:      ${thisWeek.visits}   (${change(thisWeek.visits, lastWeek.visits)})`,
+    `Page views:  ${thisWeek.views}   (${change(thisWeek.views, lastWeek.views)})`,
+    `New signups: ${newSubs}`,
+    `Commission requests: ${newComs}`,
+    '',
+    'TOP PAGES', list(top('requestPath'), '/'),
+    '',
+    'WHERE VISITORS CAME FROM', list(top('refererHost'), 'Direct or typed in'),
+    '',
+    'COUNTRIES', list(top('countryName'), 'Unknown'),
+    '',
+    'DEVICES', list(top('deviceType'), 'Unknown'),
+    '',
+    'Full dashboard: https://dash.cloudflare.com (Analytics & Logs > Web Analytics)',
+  ].join('\n');
+
+  MailApp.sendEmail(DIGEST_TO, `Charter & Ink weekly: ${thisWeek.visits} visits`, body);
+}
+
+function cfQuery(token, query, variables) {
+  const res = UrlFetchApp.fetch('https://api.cloudflare.com/client/v4/graphql', {
+    method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+    headers: { Authorization: 'Bearer ' + token },
+    payload: JSON.stringify({ query, variables }),
+  });
+  const j = JSON.parse(res.getContentText());
+  if (j.errors && j.errors.length) throw new Error('Cloudflare: ' + j.errors.map(e => e.message).join('; '));
+  return j.data.viewer.accounts[0].rumPageloadEventsAdaptiveGroups;
+}
+
+function cfTotals(token, account, site, from, to) {
+  const q = `query($a:String!,$s:String!,$f:Time!,$t:Time!){viewer{accounts(filter:{accountTag:$a}){
+    rumPageloadEventsAdaptiveGroups(limit:1,filter:{siteTag:$s,datetime_geq:$f,datetime_lt:$t}){count sum{visits}}}}}`;
+  const v = { a: account, s: site, f: from.toISOString(), t: to.toISOString() };
+  let g;
+  try { g = (cfQuery(token, q, v) || [])[0]; }
+  catch (e) { // if this account's dataset has no visits field, fall back to page views only
+    g = (cfQuery(token, q.replace(' sum{visits}', ''), v) || [])[0];
+  }
+  return { views: g ? g.count : 0, visits: g && g.sum ? g.sum.visits : (g ? g.count : 0) };
+}
+
+function cfTop(token, account, site, from, to, dim) {
+  const q = `query($a:String!,$s:String!,$f:Time!,$t:Time!){viewer{accounts(filter:{accountTag:$a}){
+    rumPageloadEventsAdaptiveGroups(limit:8,orderBy:[count_DESC],filter:{siteTag:$s,datetime_geq:$f,datetime_lt:$t}){count dimensions{${dim}}}}}}`;
+  const v = { a: account, s: site, f: from.toISOString(), t: to.toISOString() };
+  return (cfQuery(token, q, v) || []).map(g => ({ count: g.count, name: g.dimensions[dim] }));
+}
+
+function countSince(tab, from, to) {
+  const sh = sheet(tab), last = sh.getLastRow();
+  if (last < 2) return 0;
+  return sh.getRange(2, 1, last - 1, 1).getValues().filter(r => r[0] instanceof Date && r[0] >= from && r[0] < to).length;
+}
+
 // ---------- one-time setup ----------
 function setup() {
   Object.values(TABS).forEach(sheet);
   ScriptApp.getProjectTriggers()
-    .filter(t => t.getHandlerFunction() === 'sendDigest')
+    .filter(t => ['sendDigest', 'weeklyReport'].includes(t.getHandlerFunction()))
     .forEach(t => ScriptApp.deleteTrigger(t));
   ScriptApp.newTrigger('sendDigest').timeBased().everyDays(1).atHour(DIGEST_HOUR).create();
-  Logger.log('Tabs ready, daily digest scheduled around %s:00.', DIGEST_HOUR);
+  ScriptApp.newTrigger('weeklyReport').timeBased().onWeekDay(ScriptApp.WeekDay.MONDAY).atHour(DIGEST_HOUR).create();
+  Logger.log('Tabs ready. Daily digest and Monday visitor report scheduled around %s:00.', DIGEST_HOUR);
 }
 
 // ---------- helpers ----------
