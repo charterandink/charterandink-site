@@ -1,7 +1,7 @@
 // Email signup. Stores each address in the SUBSCRIBERS KV namespace.
 // POST /api/subscribe   (form fields: email, source, company = honeypot)
 
-import { notify } from "../_lib/notify.js";
+import { toSheet } from "../_lib/sheets.js";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -25,11 +25,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   const existing = await env.SUBSCRIBERS.get(email);
   if (!existing) {
     await env.SUBSCRIBERS.put(email, JSON.stringify({ source, joined: new Date().toISOString() }));
-    const where = { signature: "the Signature Sets teaser", con: "a con QR code", home: "the home page" }[source] || source;
-    waitUntil(notify(env, {
-      subject: `New signup: ${email}`,
-      text: `${email} joined the email list from ${where}.\n\nDownload the full list: https://charterandink.com/api/subscribers?key=YOUR_ADMIN_KEY`,
-    }));
+    waitUntil(toSheet(env, "signup", { email, source }));
   }
   return reply(true);
 }

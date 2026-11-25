@@ -1,7 +1,7 @@
 // POST /api/commission  -> saves a commission request in the SUBSCRIBERS KV namespace
 // under the key "commission:<timestamp>:<random>". Download them at /api/commissions?key=ADMIN_KEY.
 
-import { notify } from "../_lib/notify.js";
+import { toSheet } from "../_lib/sheets.js";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const TYPES = ["Custom chonk", "Custom set", "Gift", "Not sure yet"];
@@ -31,22 +31,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
   const key = `commission:${r.received}:${crypto.randomUUID().slice(0, 8)}`;
   await env.SUBSCRIBERS.put(key, JSON.stringify(r));
-  waitUntil(notify(env, {
-    subject: `Commission request: ${r.type || "Not sure yet"} from ${r.name}`,
-    replyTo: r.email,
-    text: [
-      `${r.name} <${r.email}>`,
-      `Type: ${r.type || "Not sure yet"}`,
-      `Budget: ${r.budget || "Not sure"}`,
-      `Need by: ${r.needBy || "No date given"}`,
-      `References: ${r.refs || "None"}`,
-      "",
-      "Their idea:",
-      r.idea,
-      "",
-      "Hit reply to answer them directly.",
-    ].join("\n"),
-  }));
+  waitUntil(toSheet(env, "commission", r));
   return Response.json({ ok: true });
 }
 

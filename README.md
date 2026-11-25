@@ -81,14 +81,15 @@ Products only show on the site if they have a fixed price and aren't hidden from
 
 The form on /commissions/ saves each request. Download them all as a spreadsheet at
 `https://charterandink.com/api/commissions?key=YOUR_ADMIN_KEY` (same ADMIN_KEY as the email list).
-Each new request also emails mike@charterandink.com, with Reply set to the customer.
+Each request is also copied to the Google Sheet (see below).
 
-## Email alerts (Resend)
+## Google Sheet and daily digest
 
-New signups and commission requests send an alert through Resend. Cloudflare Pages settings needed:
-`RESEND_API_KEY` (Secret). Optional: `NOTIFY_TO` (defaults to mike@charterandink.com) and
-`NOTIFY_FROM` (defaults to "Charter & Ink Website <alerts@charterandink.com>").
-Without the key, the site works normally and just doesn't send alerts.
+Every signup and commission request is copied to a Google Sheet (tabs: Subscribers, Commissions) by the
+Apps Script in `apps-script/Code.gs`. Once a day it emails mike@charterandink.com a digest of anything new.
+No new activity means no email. Setup steps are at the top of that file.
+Cloudflare Pages settings: `SHEETS_WEBHOOK_URL` (Text, the script's /exec URL) and `SHEETS_SECRET` (Secret,
+same as SECRET in the script). Cloudflare also keeps its own copy, so the CSV links above still work.
 
 ## Gallery (Workshop page)
 
