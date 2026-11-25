@@ -7,6 +7,15 @@
 
 export const SHIPPING = { flatCents: 700, freeOverCents: 7500 };
 
+// Square category name -> what the website calls it. Rename in Square anytime;
+// a category not listed here shows under its Square name.
+const CATEGORY_LABELS = {
+  "Dice Sets": "Sharp-Edge Sets",
+  "Chonk Dice": "Chonks",
+};
+// Categories sold elsewhere (Etsy only) that never appear or check out on the site.
+const HIDDEN_CATEGORIES = ["Captured Moments Canvas"];
+
 export function squareBase(env) {
   return env.SQUARE_ENV === "production"
     ? "https://connect.squareup.com/v2"
@@ -76,7 +85,9 @@ export async function loadCatalog(env) {
 
     const images = (d.image_ids || []).map(id => related.get(id)?.image_data?.url).filter(Boolean);
     const catIds = [d.category_id, ...(d.categories || []).map(c => c.id)].filter(Boolean);
-    const categories = [...new Set(catIds.map(id => related.get(id)?.category_data?.name).filter(Boolean))];
+    const rawCats = catIds.map(id => related.get(id)?.category_data?.name).filter(Boolean);
+    if (rawCats.some(c => HIDDEN_CATEGORIES.includes(c))) continue;
+    const categories = [...new Set(rawCats.map(c => CATEGORY_LABELS[c] || c))];
 
     const variations = [];
     for (const v of d.variations || []) {

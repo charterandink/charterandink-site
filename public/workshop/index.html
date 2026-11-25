@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Workshop | Charter &amp; Ink</title>
+<meta name="description" content="How Charter & Ink dice are made: sculpted by hand, poured in small batches, inked one face at a time and balance-checked. Plus photos from the workbench in Jefferson City, Missouri.">
+<meta property="og:title" content="The Workshop | Charter & Ink">
+<meta property="og:description" content="Where the dice come from. Sculpted, poured, inked, checked.">
+<meta property="og:image" content="https://charterandink.com/img/share.jpg">
+<link rel="icon" href="/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="mark" href="/"><img src="/img/logo.png" alt="" class="mark-img" onerror="this.remove()"><span>Charter <em>&amp;</em> Ink</span></a>
+  <button class="menu-btn" aria-expanded="false" aria-controls="site-nav">Menu</button>
+  <nav id="site-nav">
+    <a href="/shop/">Shop</a>
+    <a href="/#signature">Signature Sets</a>
+    <a href="/commissions/">Commissions</a>
+    <a href="/workshop/" aria-current="page">Workshop</a>
+    <a class="nav-cta" href="#" data-open-cart>Cart</a>
+  </nav>
+</header>
+
+<main class="page workshop">
+
+  <div class="page-head">
+    <p class="kicker">The Workshop</p>
+    <h1>Where the dice come from.</h1>
+    <p class="lede">Every die starts as a sculpture on this bench. Here's how they're made, and some of what's come off it lately.</p>
+  </div>
+
+  <section class="made">
+    <h2>How it's made</h2>
+    <ol class="steps">
+      <li><span>I</span><h3>Sculpt</h3><p>Every sigil starts as a master sculpted by hand. No stock molds with a logo slapped on.</p></li>
+      <li><span>II</span><h3>Pour</h3><p>Small batches of resin, pigment and powder. No two come out the same.</p></li>
+      <li><span>III</span><h3>Ink</h3><p>Numbers inked by hand, one face at a time.</p></li>
+      <li><span>IV</span><h3>Check</h3><p>Every die is balance-checked before it ships.</p></li>
+    </ol>
+  </section>
+
+  <section class="gallery">
+    <div class="gal-head">
+      <h2>From the workbench</h2>
+      <div class="tabs" id="gal-tabs" role="tablist"></div>
+    </div>
+    <div class="gal-grid" id="gal-grid"></div>
+    <p class="gal-follow">More from the workbench on Instagram: <a href="https://www.instagram.com/charterandink">@charterandink</a></p>
+  </section>
+
+  <section class="makers">
+    <h2>The makers</h2>
+    <p>Charter &amp; Ink is Mike and his wife. Mike has a BFA from Mizzou and has been making art for more than 25 years, from digital to 3D. Together they sculpt, pour, inspect and pack every order.</p>
+    <p class="signoff">The studio also employs one ogre. Steelfrenzy handles quality control. He is very proud of his work. His mom is too.</p>
+  </section>
+
+</main>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="x" id="lb-close" aria-label="Close">×</button>
+  <figure><img id="lb-img" alt=""><figcaption id="lb-cap"></figcaption></figure>
+</div>
+
+<footer>
+  <div class="foot-mark">Charter <em>&amp;</em> Ink</div>
+  <p class="foot-tag">Fantasy art you can roll.</p>
+  <p class="foot-links">
+    <a href="/shop/">Shop</a><a href="/commissions/">Commissions</a><a href="/workshop/">Workshop</a><a href="/policies.html">Shipping &amp; returns</a>
+  </p>
+  <p class="foot-links">
+    <a href="mailto:mike@charterandink.com">mike@charterandink.com</a><a href="https://www.instagram.com/charterandink">Instagram</a><a href="https://charterandink.etsy.com">Etsy</a>
+  </p>
+  <p>Handmade in Jefferson City, Missouri</p>
+  <p class="fine">© <span class="yr">2026</span> Charter &amp; Ink</p>
+</footer>
+
+<script src="/shop.js"></script>
+<script>
+(async () => {
+  const { esc } = CI, grid = document.getElementById('gal-grid'), tabs = document.getElementById('gal-tabs');
+  let items = [];
+  try { items = await (await fetch('/gallery.json')).json(); } catch {}
+  const tags = ['All', ...new Set(items.map(i => i.tag).filter(Boolean))];
+  let cur = 'All';
+  function draw() {
+    tabs.innerHTML = tags.length > 2 ? tags.map(t => `<button role="tab" aria-selected="${t === cur}" data-t="${esc(t)}">${esc(t)}</button>`).join('') : '';
+    const list = items.filter(i => cur === 'All' || i.tag === cur);
+    grid.innerHTML = list.length
+      ? list.map((i, n) => `<button class="gal-item" data-n="${items.indexOf(i)}"><img src="${esc(i.thumb || i.src)}" alt="${esc(i.caption)}" loading="lazy"></button>`).join('')
+      : '<p class="loading">Photos are on the way.</p>';
+  }
+  tabs.addEventListener('click', e => { const b = e.target.closest('button'); if (b) { cur = b.dataset.t; draw(); } });
+  const lb = document.getElementById('lightbox'), lbImg = document.getElementById('lb-img'), lbCap = document.getElementById('lb-cap');
+  grid.addEventListener('click', e => {
+    const b = e.target.closest('.gal-item'); if (!b) return;
+    const i = items[+b.dataset.n];
+    lbImg.src = i.src; lbImg.alt = i.caption; lbCap.textContent = i.caption; lb.hidden = false;
+  });
+  const close = () => { lb.hidden = true; lbImg.src = ''; };
+  document.getElementById('lb-close').onclick = close;
+  lb.addEventListener('click', e => { if (e.target === lb) close(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !lb.hidden) close(); });
+  draw();
+})();
+</script>
+</body>
+</html>

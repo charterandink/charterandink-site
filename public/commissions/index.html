@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Commissions | Charter &amp; Ink</title>
+<meta name="description" content="Custom resin dice commissions from Charter & Ink: chonk D20s with your own sigil, sets built around your character or campaign, and one-of-a-kind gifts. Custom chonks from $100, sets from $150.">
+<meta property="og:title" content="Commissions | Charter & Ink">
+<meta property="og:description" content="Got an idea? We'd love to hear it. Custom chonks, character sets and one-of-a-kind gifts.">
+<meta property="og:image" content="https://charterandink.com/img/share.jpg">
+<link rel="icon" href="/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="mark" href="/"><img src="/img/logo.png" alt="" class="mark-img" onerror="this.remove()"><span>Charter <em>&amp;</em> Ink</span></a>
+  <button class="menu-btn" aria-expanded="false" aria-controls="site-nav">Menu</button>
+  <nav id="site-nav">
+    <a href="/shop/">Shop</a>
+    <a href="/#signature">Signature Sets</a>
+    <a href="/commissions/" aria-current="page">Commissions</a>
+    <a href="/workshop/">Workshop</a>
+    <a class="nav-cta" href="#" data-open-cart>Cart</a>
+  </nav>
+</header>
+
+<main class="page commissions">
+
+  <div class="page-head">
+    <p class="kicker">Commissions</p>
+    <h1>Got an idea? We'd love to hear it.</h1>
+    <p class="lede">A die for your character's sigil. A set that matches your campaign's world. A chonk for the friend who rolls nothing but ones. If you can describe it, there's a good chance we can sculpt it.</p>
+    <p class="lede">We take on a small number of commissions at a time, so every piece gets the same hands-on attention as our own work. When the spots are full, we'll let you know when the next one opens.</p>
+  </div>
+
+  <div class="comm-grid">
+    <section class="comm-card">
+      <h2>What we make</h2>
+      <ul class="perks">
+        <li>Custom chonks, 35mm or 55mm, with your own sigil or colorway</li>
+        <li>Sharp-edge sets built around a character, class or campaign</li>
+        <li>Gifts for your DM, your party, or the player who has everything</li>
+      </ul>
+    </section>
+    <section class="comm-card">
+      <h2>Where pricing starts</h2>
+      <p class="big-price">Custom chonks from <b>$100</b></p>
+      <p class="big-price">Custom sets from <b>$150</b></p>
+      <p class="note">Final price depends on the sculpting, the pour and the finish. You'll get an exact quote before anything is made.</p>
+    </section>
+  </div>
+
+  <section class="how">
+    <h2>How it works</h2>
+    <ol class="how-steps">
+      <li><span>1</span><h3>Tell us your idea</h3><p>Fill out the form below. Rough is fine. Reference images help.</p></li>
+      <li><span>2</span><h3>We sketch and quote</h3><p>We'll reply with a concept and a price, usually within a few days.</p></li>
+      <li><span>3</span><h3>50% deposit</h3><p>That holds your spot and starts the sculpting.</p></li>
+      <li><span>4</span><h3>We sculpt, pour and finish</h3><p>We'll send progress photos along the way.</p></li>
+      <li><span>5</span><h3>Balance, then it ships</h3><p>Most commissions take 1 to 2 months from deposit to doorstep.</p></li>
+    </ol>
+    <p class="note"><b>Need it by a certain date?</b> Tell us in the form. If we can't make your deadline, we'll say so upfront.</p>
+    <p class="note"><b>A few limits:</b> we make original designs only, so no licensed characters, logos or trademarks. We're happy to make something in the spirit of a thing you love, just not a copy of it.</p>
+  </section>
+
+  <section class="comm-form-wrap" id="request">
+    <h2>Send us your idea</h2>
+    <form id="comm-form" class="comm-form" action="/api/commission" method="post">
+      <div class="row2">
+        <label>Name<input name="name" required autocomplete="name"></label>
+        <label>Email<input name="email" type="email" required autocomplete="email"></label>
+      </div>
+      <label>What are you thinking?
+        <select name="type">
+          <option>Custom chonk</option>
+          <option>Custom set</option>
+          <option>Gift</option>
+          <option selected>Not sure yet</option>
+        </select>
+      </label>
+      <label>Tell us your idea
+        <textarea name="idea" rows="6" required placeholder="The character, the colors, the story, the person it's for. Whatever you've got."></textarea>
+      </label>
+      <div class="row2">
+        <label>Budget
+          <select name="budget">
+            <option>$100 to $150</option>
+            <option>$150 to $300</option>
+            <option>$300+</option>
+            <option selected>Not sure</option>
+          </select>
+        </label>
+        <label>Need it by (optional)<input name="needBy" placeholder="e.g. March 15 for a birthday"></label>
+      </div>
+      <label>Link to reference images (optional)<input name="refs" type="url" placeholder="Google Drive, Pinterest, Imgur..."></label>
+      <input name="company" type="text" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+      <button class="btn" type="submit">Send my idea</button>
+      <p class="form-msg" id="comm-msg" role="status" aria-live="polite"></p>
+    </form>
+    <p class="ogre-note">Steelfrenzy reads every request. He has opinions. Mostly good ones.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot-mark">Charter <em>&amp;</em> Ink</div>
+  <p class="foot-tag">Fantasy art you can roll.</p>
+  <p class="foot-links">
+    <a href="/shop/">Shop</a><a href="/commissions/">Commissions</a><a href="/workshop/">Workshop</a><a href="/policies.html">Shipping &amp; returns</a>
+  </p>
+  <p class="foot-links">
+    <a href="mailto:mike@charterandink.com">mike@charterandink.com</a><a href="https://www.instagram.com/charterandink">Instagram</a><a href="https://charterandink.etsy.com">Etsy</a>
+  </p>
+  <p>Handmade in Jefferson City, Missouri</p>
+  <p class="fine">© <span class="yr">2026</span> Charter &amp; Ink</p>
+</footer>
+
+<script src="/shop.js"></script>
+<script>
+(() => {
+  const f = document.getElementById('comm-form'), msg = document.getElementById('comm-msg');
+  f.addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = f.querySelector('button');
+    btn.disabled = true; msg.textContent = 'Sending...';
+    try {
+      const r = await fetch(f.action, { method: 'POST', body: new FormData(f) });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok) { f.reset(); f.hidden = true; msg.textContent = ''; f.insertAdjacentHTML('afterend', '<p class="sent">Got it. We\'ll be in touch within a few days.</p>'); return; }
+      msg.textContent = j.error || 'Something went wrong. Try again, or email mike@charterandink.com.';
+    } catch { msg.textContent = 'Something went wrong. Try again, or email mike@charterandink.com.'; }
+    btn.disabled = false;
+  });
+})();
+</script>
+</body>
+</html>

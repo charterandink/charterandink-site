@@ -11,6 +11,7 @@ export async function onRequestGet({ request, env }) {
   do {
     const page = await env.SUBSCRIBERS.list({ cursor });
     for (const k of page.keys) {
+      if (k.name.startsWith("commission:")) continue;
       const v = JSON.parse((await env.SUBSCRIBERS.get(k.name)) || "{}");
       rows.push([k.name, v.source || "", v.joined || ""]);
     }

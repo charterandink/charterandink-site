@@ -77,6 +77,24 @@ Products only show on the site if they have a fixed price and aren't hidden from
 4. Connect Pirate Ship to Square (Pirate Ship → Settings → Integrations → Square) and check the test order shows up to ship.
 5. Point the home page buttons and the `/shop` and `/hello` short links at `/shop/`.
 
+## Commission requests
+
+The form on /commissions/ saves each request. Download them all as a spreadsheet at
+`https://charterandink.com/api/commissions?key=YOUR_ADMIN_KEY` (same ADMIN_KEY as the email list).
+Requests don't email you yet; check that link, or ask Claude to add email alerts.
+
+## Gallery (Workshop page)
+
+Photos live in `public/img/gallery/`. Each one is listed in `public/gallery.json` with:
+`src` (full photo, about 2000 px), `thumb` (square-ish, about 800 px, optional), `caption`, and `tag`
+(Centerpieces, In Progress, or Commissions). A tab appears for each tag that has photos.
+
+## Site categories
+
+Square category names are renamed for the site in `functions/_lib/square.js` (Dice Sets → Sharp-Edge Sets,
+Chonk Dice → Chonks). Captured Moments Canvas is hidden from the site (Etsy only). A Square category named
+Singles shows up as its own tab automatically.
+
 ## QR codes
 
-Print QR codes that point to `charterandink.com/hello` (or `/con` for convention handouts). To change where they go, edit `public/_redirects`. When the Square store is live, `/hello` and `/shop` get pointed at it and every card you've printed still works.
+Print QR codes that point to `charterandink.com/hello` (or `/con` for convention handouts, which lands on the Signature Sets signup and tags signups as con). To change where they go, edit `public/_redirects`. When the Square store is live, `/hello` and `/shop` get pointed at it and every card you've printed still works.

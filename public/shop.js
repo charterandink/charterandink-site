@@ -81,6 +81,33 @@
       store.set(items.filter(x => x.qty > 0));
     });
     document.querySelectorAll("[data-open-cart]").forEach(a => a.addEventListener("click", e => { e.preventDefault(); open(); }));
+
+    // Phone menu
+    const mb = $(".menu-btn"), nav = $("#site-nav");
+    if (mb && nav) {
+      mb.onclick = () => { const o = nav.classList.toggle("open"); mb.setAttribute("aria-expanded", o); };
+      nav.addEventListener("click", e => { if (e.target.closest("a")) { nav.classList.remove("open"); mb.setAttribute("aria-expanded", "false"); } });
+    }
+    // Footer year
+    document.querySelectorAll(".yr").forEach(y => y.textContent = new Date().getFullYear());
+    // Email signup forms anywhere on the page
+    const src = new URLSearchParams(location.search).get("src");
+    document.querySelectorAll(".signup-form").forEach(f => {
+      const msg = f.nextElementSibling?.classList.contains("form-msg") ? f.nextElementSibling : null;
+      if (src) f.querySelector("[name=source]").value = src.slice(0, 40);
+      f.addEventListener("submit", async e => {
+        e.preventDefault();
+        const btn = f.querySelector("button"); btn.disabled = true;
+        if (msg) msg.textContent = "Sending...";
+        try {
+          const r = await fetch(f.action, { method: "POST", body: new FormData(f), headers: { Accept: "application/json" } });
+          const j = await r.json().catch(() => ({}));
+          if (r.ok) { f.reset(); if (msg) msg.textContent = "You're on the list. Watch your inbox."; }
+          else if (msg) msg.textContent = j.error || "Something went wrong. Try again?";
+        } catch { if (msg) msg.textContent = "Something went wrong. Try again?"; }
+        btn.disabled = false;
+      });
+    });
     render();
   }
   function open() { $("#cart-drawer").classList.add("open"); $("#cart-drawer").setAttribute("aria-hidden", "false"); $("#cart-scrim").hidden = false; }
