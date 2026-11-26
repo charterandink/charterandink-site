@@ -153,8 +153,11 @@
 
 <script src="/shop.js"></script>
 <script>
-// Sharp-Edge Sets card shows the Forgeheart Shardform set's main photo from Square.
-CI.loadCatalog().then(list => {
+// Sharp-Edge Sets card shows the Forgeheart Shardform set's main photo
+// (from Etsy while the site is in Etsy mode, from Square once the store is on).
+const forgeheartEtsy = 'https://i.etsystatic.com/63306585/r/il/5369c5/8375007191/il_794xN.8375007191_d5jy.jpg';
+if (CI.STORE === 'etsy') document.getElementById('cover-sets').innerHTML = `<img src="${forgeheartEtsy}" alt="Shardform Forgeheart 11 piece dice set" loading="lazy" onerror="this.src=this.src.replace('il_794xN','il_fullxfull')">`;
+else CI.loadCatalog().then(list => {
   const p = list.find(x => /forgeheart/i.test(x.name)) || list.find(x => x.categories.includes('Sharp-Edge Sets') && x.images.length);
   if (p && p.images[0]) document.getElementById('cover-sets').innerHTML = `<img src="${CI.esc(p.images[0])}" alt="${CI.esc(p.name)}" loading="lazy">`;
 }).catch(() => {});

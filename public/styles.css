@@ -461,3 +461,6 @@ a.kind:hover .kind-img img { transform: scale(1.05); }
   .band-inner { padding: 2rem 1.5rem; }
   .gal-grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* Etsy mode: no cart */
+body.etsy-mode [data-open-cart], body.etsy-mode .cart-fab { display: none !important; }

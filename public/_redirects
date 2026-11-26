@@ -1,6 +1,12 @@
 # Short links for print. Change the destination anytime; the printed QR code stays the same.
 # 302 = temporary, so browsers don't cache it forever.
-# /hello still goes to Etsy until the Square store is live. Then change it to /shop/
-/hello   https://charterandink.etsy.com   302
-/con     /?src=con#signature              302
-/commission  /commissions/                301
+
+# ETSY MODE: the website store is switched off, so shop pages send people to Etsy.
+# When the Square store goes live, delete these three lines and set STORE = "square" in shop.js.
+/shop           https://www.etsy.com/shop/CharterandInk   302
+/shop/*         https://www.etsy.com/shop/CharterandInk   302
+/product.html   https://www.etsy.com/shop/CharterandInk   302
+
+/hello       https://www.etsy.com/shop/CharterandInk   302
+/con         /?src=con#signature                       302
+/commission  /commissions/                             301

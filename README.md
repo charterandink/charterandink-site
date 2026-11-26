@@ -49,6 +49,14 @@ The page looks finished without them (each spot has a resin-color placeholder). 
 
 Visit `https://charterandink.com/api/subscribers?key=YOUR_ADMIN_KEY` and a CSV downloads.
 
+## Store mode: Etsy for now
+
+The site is in **Etsy mode**: every Shop link goes to the matching Etsy search, the cart is hidden and Square
+isn't used. The Square store is built and tested in sandbox, just switched off. To turn it on:
+1. In `public/shop.js`, change `const STORE = "etsy";` to `const STORE = "square";`
+2. In `public/_redirects`, delete the three `/shop` and `/product.html` lines (and point `/hello` at `/shop/`).
+3. Put the production Square values in Cloudflare (see Going live below).
+
 ## The Square store
 
 New pages: `/shop/` (all products), `/product.html?p=...` (one product), `/thanks.html` (after checkout), `/policies.html` (shipping, returns, privacy; **edit the draft text before launch**). The cart lives on every shop page. The home page still points to Etsy until you're ready to launch.

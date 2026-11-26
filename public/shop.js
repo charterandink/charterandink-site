@@ -1,5 +1,12 @@
 // Charter & Ink storefront: catalog loading, cart drawer, checkout.
 (() => {
+  // ===== STORE SWITCH =====
+  // "etsy":   Shop links go to the Etsy shop, cart hidden, Square not used.
+  // "square": the website store (shop pages, cart, Square checkout).
+  // Switching to "square" also means removing the /shop lines in public/_redirects.
+  const STORE = "etsy";
+  const ETSY = "https://www.etsy.com/shop/CharterandInk";
+
   const CART_KEY = "ci-cart-v1";
   const $ = (s, el = document) => el.querySelector(s);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -173,7 +180,18 @@
     btn.disabled = false; btn.textContent = "Check out";
   }
 
-  window.CI = { loadCatalog, add, open, money, esc, clear: () => store.set([]), findVar };
-  document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", mount) : mount();
-  loadCatalog().catch(() => {});
+  // In Etsy mode, point every shop link at the matching Etsy search and hide the cart.
+  function etsyMode() {
+    document.body.classList.add("etsy-mode");
+    document.querySelectorAll('a[href^="/shop"], a[href^="/product.html"]').forEach(a => {
+      const u = new URL(a.getAttribute("href"), location.origin);
+      const term = u.searchParams.get("q") || { "Sharp-Edge Sets": "dice set", "Chonks": "chonk", "Singles": "single" }[u.searchParams.get("c")] || "";
+      a.href = term ? `${ETSY}?search_query=${encodeURIComponent(term)}` : ETSY;
+    });
+  }
+
+  window.CI = { STORE, ETSY, loadCatalog, add, open, money, esc, clear: () => store.set([]), findVar };
+  const start = () => { mount(); if (STORE === "etsy") etsyMode(); };
+  document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", start) : start();
+  if (STORE === "square") loadCatalog().catch(() => {});
 })();
