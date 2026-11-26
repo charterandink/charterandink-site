@@ -1,0 +1,89 @@
+/* ================= FOREST THEME (experiment) =================
+   Mike's palette: logo green #97A43E, cream #F0DE9C, map backgrounds.
+   Loaded after styles.css. Delete the <link> to go back to copper. */
+
+:root {
+  --ink: #0c110f;
+  --ink-2: #131a16;
+  --parch: #f3e6bd;
+  --parch-dim: #c9c3a2;
+  --copper: #97a43e;      /* accent: logo green */
+  --copper-hi: #f0de9c;   /* highlight: cream */
+  --moss: #5e6b2a;
+  --deep: #1d3330;
+}
+
+body { background: var(--ink); }
+body::before {
+  background:
+    radial-gradient(ellipse at 15% -10%, rgba(151,164,62,.14), transparent 55%),
+    radial-gradient(ellipse at 110% 60%, rgba(51,90,87,.22), transparent 55%);
+}
+
+/* map-backed bands: full-bleed art, darkened so text stays readable */
+.hero2, .signature, .band, .ws-teaser { position: relative; isolation: isolate; }
+.hero2::before, .signature::before, .band::before {
+  content: ""; position: absolute; z-index: -1; top: 0; bottom: 0;
+  left: calc(50% - 50vw); right: calc(50% - 50vw);
+  background-size: cover; background-position: center;
+}
+.hero2 { max-width: none; padding-left: max(1.5rem, calc(50vw - 590px)); padding-right: max(1.5rem, calc(50vw - 590px)); }
+.hero2::before {
+  left: 0; right: 0;
+  background-image:
+    linear-gradient(90deg, rgba(8,12,10,.94) 0%, rgba(8,12,10,.82) 45%, rgba(8,12,10,.55) 100%),
+    linear-gradient(180deg, rgba(12,17,15,0) 70%, var(--ink) 100%),
+    url(/img/maps/jungle-river.jpg);
+}
+.signature::before {
+  background-image: linear-gradient(rgba(8,12,10,.80), rgba(8,12,10,.86)), url(/img/maps/clearing.jpg);
+}
+.band { padding: 5rem 1.5rem; margin: 2rem 0; }
+.band::before {
+  background-image: linear-gradient(rgba(10,9,6,.74), rgba(10,9,6,.80)), url(/img/maps/forest-path.jpg);
+}
+
+/* signature panel: dark glass over the map */
+.sig-inner { background: rgba(12,17,15,.72); border-color: rgba(151,164,62,.45); backdrop-filter: blur(2px); }
+.sig-inner::before { border-color: rgba(240,222,156,.18); }
+
+/* commissions band: cream text on the path map instead of a parchment card */
+.band-inner { background: none; color: var(--parch); padding: 0; }
+.band-inner .kicker { color: var(--copper); }
+.band-inner p { color: var(--parch-dim); }
+
+/* type and accents */
+.kicker { color: var(--copper); }
+h1 i { color: var(--copper-hi); }
+.price { color: var(--copper-hi); }
+.btn { color: #10140c; }
+.btn:hover { background: #b2c04f; box-shadow: 0 10px 30px -10px rgba(151,164,62,.7); }
+.btn.ghost { color: var(--parch); }
+.nav-cta { color: #10140c !important; }
+.foot-tag { color: var(--copper); }
+.hero-photo::after { background: radial-gradient(circle at 55% 50%, rgba(151,164,62,.22), transparent 60%); }
+.sigil { color: var(--copper); }
+.sigil-row a:hover .sigil { color: var(--copper-hi); }
+.sigil-row a:hover { border-color: var(--copper); background: rgba(151,164,62,.08); }
+.soon-sigil .sigil { color: rgba(151,164,62,.42); }
+a.kind:hover, .card:hover { border-color: rgba(151,164,62,.55); }
+.section-head { border-top-color: rgba(240,222,156,.14); }
+.ws-img img, .hero-photo img { box-shadow: 0 30px 60px -25px #000, 0 0 0 1px rgba(151,164,62,.25); }
+
+/* inner pages: a quiet map wash behind the page heading */
+.page-head { position: relative; isolation: isolate; padding: 2.5rem 0 1rem; }
+.page-head::before {
+  content: ""; position: absolute; z-index: -1; top: -2rem; bottom: -1rem;
+  left: calc(50% - 50vw); right: calc(50% - 50vw);
+  background: linear-gradient(180deg, rgba(12,17,15,.78), var(--ink) 92%), url(/img/maps/clearing-sm.jpg) center/cover;
+}
+.comm-form-wrap { background: var(--parch); }
+
+@media (max-width: 900px) {
+  .hero2::before {
+    background-image:
+      linear-gradient(180deg, rgba(8,12,10,.70) 0%, rgba(8,12,10,.90) 55%, var(--ink) 100%),
+      url(/img/maps/jungle-river-sm.jpg);
+  }
+}
+.sigil.ogre { color: #97a43e; }
