@@ -470,3 +470,16 @@ body.etsy-mode [data-open-cart], body.etsy-mode .cart-fab { display: none !impor
 .mark-img { height: 64px; width: auto; display: block; }
 .foot-logo { height: 96px; width: auto; margin: 0 auto .6rem; display: block; }
 @media (max-width: 600px) { .mark-img { height: 52px; } }
+
+/* sigil marks */
+.sigil { width: 64px; height: 64px; color: var(--copper); margin-bottom: .6rem; transition: color .2s, transform .3s; }
+.sigil .cut { fill: var(--ink); }
+.sigil-row a { align-items: center; text-align: center; padding: 1.4rem .8rem 1.2rem; }
+.sigil-row a:hover .sigil { color: var(--copper-hi); transform: translateY(-3px) rotate(-3deg); }
+.ogre-line { display: flex; gap: 1.2rem; align-items: center; margin-top: 1.4rem; }
+.ogre-line .signoff { margin-top: 0; }
+.sigil.ogre { width: 88px; height: 88px; flex: none; margin: 0; color: #9dbf3c; }
+
+.sigil-row { grid-template-columns: repeat(7, 1fr); }
+@media (max-width: 900px) { .sigil-row { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 600px) { .sigil-row { grid-template-columns: repeat(2, 1fr); } .sigil-row a:last-child { grid-column: span 2; } }
