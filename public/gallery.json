@@ -3,6 +3,36 @@
     "src": "/img/gallery/ogre-hand-emberblade.jpg",
     "thumb": "/img/gallery/ogre-hand-emberblade-thumb.jpg",
     "caption": "An amber Emberblade chonk, passing Steelfrenzy's inspection.",
-    "tag": "Centerpieces"
+    "tag": "Chonks"
+  },
+  {
+    "src": "/img/gallery/ogre-hand-mckraken.jpg",
+    "thumb": "/img/gallery/ogre-hand-mckraken-thumb.jpg",
+    "caption": "A McKraken chonk in Steelfrenzy's grip.",
+    "tag": "Chonks"
+  },
+  {
+    "src": "/img/gallery/shardform-black.jpg",
+    "thumb": "/img/gallery/shardform-black-thumb.jpg",
+    "caption": "A black Shardform set with copper sigils.",
+    "tag": "Sets"
+  },
+  {
+    "src": "/img/gallery/briar-and-thorn.jpg",
+    "thumb": "/img/gallery/briar-and-thorn-thumb.jpg",
+    "caption": "A Briar & Thorn set with white rose sigils.",
+    "tag": "Sets"
+  },
+  {
+    "src": "/img/gallery/blue-gold-d20.jpg",
+    "thumb": "/img/gallery/blue-gold-d20-thumb.jpg",
+    "caption": "Blue and violet swirl with gold numbers.",
+    "tag": "Chonks"
+  },
+  {
+    "src": "/img/gallery/packed-chonk.jpg",
+    "thumb": "/img/gallery/packed-chonk-thumb.jpg",
+    "caption": "Every chonk ships in its own box.",
+    "tag": "Packing"
   }
 ]
