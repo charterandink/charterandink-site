@@ -21,8 +21,8 @@ The page looks finished without them (each spot has a resin-color placeholder). 
 
 | File | Where it shows |
 |---|---|
-| logo.png | next to the name in the header (transparent PNG, about 80px tall) |
-| favicon.png | browser tab icon (square, 512px) |
+| logo-light.svg | header and footer logo (also logo.svg dark, logo-green.svg green) |
+| favicon.png, apple-touch-icon.png | browser tab and phone home-screen icons |
 | hero.jpg | the big circle at the top (square crop, one hero die) |
 | shardform.jpg | Shardform card |
 | emberblade.jpg | Emberblade card |

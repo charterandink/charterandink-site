@@ -464,3 +464,9 @@ a.kind:hover .kind-img img { transform: scale(1.05); }
 
 /* Etsy mode: no cart */
 body.etsy-mode [data-open-cart], body.etsy-mode .cart-fab { display: none !important; }
+
+/* logo */
+.mark { line-height: 0; }
+.mark-img { height: 64px; width: auto; display: block; }
+.foot-logo { height: 96px; width: auto; margin: 0 auto .6rem; display: block; }
+@media (max-width: 600px) { .mark-img { height: 52px; } }
