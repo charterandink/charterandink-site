@@ -483,3 +483,13 @@ body.etsy-mode [data-open-cart], body.etsy-mode .cart-fab { display: none !impor
 .sigil-row { grid-template-columns: repeat(7, 1fr); }
 @media (max-width: 900px) { .sigil-row { grid-template-columns: repeat(4, 1fr); } }
 @media (max-width: 600px) { .sigil-row { grid-template-columns: repeat(2, 1fr); } .sigil-row a:last-child { grid-column: span 2; } }
+
+/* sigil row: wraps and centers as the collection grows */
+.sigil-row { display: flex; flex-wrap: wrap; justify-content: center; gap: .8rem; }
+.sigil-row > a, .sigil-row > .soon-sigil { flex: 0 0 calc((100% - 5 * .8rem) / 6); }
+.soon-sigil { border: 1px dashed rgba(239,227,200,.16); padding: 1.4rem .8rem 1.2rem; display: flex; flex-direction: column; align-items: center; text-align: center; gap: .25rem; }
+.soon-sigil .sigil { color: rgba(194,122,58,.45); }
+.soon-sigil b { font-family: var(--display); font-weight: 400; font-size: 1.15rem; line-height: 1.15; color: var(--parch-dim); }
+.soon-sigil span { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--parch-dim); opacity: .7; }
+@media (max-width: 900px) { .sigil-row > a, .sigil-row > .soon-sigil { flex-basis: calc((100% - 3 * .8rem) / 4); } }
+@media (max-width: 600px) { .sigil-row > a, .sigil-row > .soon-sigil { flex-basis: calc((100% - .8rem) / 2); } .sigil-row a:last-child { grid-column: auto; } }
