@@ -493,3 +493,5 @@ body.etsy-mode [data-open-cart], body.etsy-mode .cart-fab { display: none !impor
 .soon-sigil span { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--parch-dim); opacity: .7; }
 @media (max-width: 900px) { .sigil-row > a, .sigil-row > .soon-sigil { flex-basis: calc((100% - 3 * .8rem) / 4); } }
 @media (max-width: 600px) { .sigil-row > a, .sigil-row > .soon-sigil { flex-basis: calc((100% - .8rem) / 2); } .sigil-row a:last-child { grid-column: auto; } }
+
+.sigils h2 { max-width: none; }
