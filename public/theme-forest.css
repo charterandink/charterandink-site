@@ -87,3 +87,13 @@ a.kind:hover, .card:hover { border-color: rgba(151,164,62,.55); }
   }
 }
 .sigil.ogre { color: #97a43e; }
+
+/* map runs up behind the header: no dark stripe across the top */
+:root { --header-h: 110px; }
+.hero2 { margin-top: calc(-1 * var(--header-h)); padding-top: calc(var(--header-h) + 2.5rem); }
+.page-head::before { top: calc(-1 * var(--header-h) - 2rem); }
+@media (max-width: 900px) { .hero2 { padding-top: calc(var(--header-h) + 1rem); } }
+@media (max-width: 600px) { :root { --header-h: 100px; } }
+/* line hero text up with the logo, and blend the seam into Signature Sets */
+.hero2 { padding-left: max(1.5rem, calc(50vw - 590px + 1.5rem)); padding-right: max(1.5rem, calc(50vw - 590px + 1.5rem)); }
+.signature::before { background-image: linear-gradient(180deg, var(--ink) 0%, rgba(8,12,10,.82) 22%, rgba(8,12,10,.86) 100%), url(/img/maps/clearing.jpg); }
